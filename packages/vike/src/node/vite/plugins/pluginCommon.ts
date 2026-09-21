@@ -13,6 +13,7 @@ import { assertResolveAlias } from './pluginCommon/assertResolveAlias.js'
 import { getVikeConfigInternal, setVikeConfigContext } from '../shared/resolveVikeConfigInternal.js'
 import { assertViteRoot, getViteRoot, normalizeViteRoot } from '../../api/resolveViteConfigUser.js'
 import { temp_disablePrerenderAutoRun } from '../../prerender/context.js'
+import { resolvePrerenderConfigGlobal, isDistServerRemoved } from '../../prerender/resolvePrerenderConfig.js'
 import type { VitePluginServerEntryOptions } from '@brillout/vite-plugin-server-entry/plugin'
 import { version as viteVersionVike } from 'vite'
 import '../assertEnvVite.js'
@@ -63,6 +64,7 @@ function pluginCommon(vikeVitePluginOptions: unknown): Plugin[] {
             configVikePromise: Promise.resolve({
               prerender: vikeConfig.prerenderContext.isPrerenderingEnabled,
             }),
+            ...(await disableAutoImportIfPrerendering(isBuild)),
           }
         },
       },
@@ -205,9 +207,21 @@ function temp_supportOldInterface(config: ResolvedConfig) {
 }
 
 // Only emit dist/server/entry.mjs if necessary
+// TO-DO/eventually: also do this when using Universal Deploy
 async function emitServerEntryOnlyIfNeeded(config: ResolvedConfig) {
   const vikeConfig = await getVikeConfigInternal()
   if (config.vitePluginServerEntry?.inject && !vikeConfig.prerenderContext.isPrerenderingEnabled) {
+    // Might be set too late: https://github.com/vikejs/vike/pull/3485
     config.vitePluginServerEntry.disableServerEntryEmit = true
+  }
+}
+
+// Don't let @brillout/vite-plugin-server-entry's autoImporter.js import dist/server/entry.js when pre-rendering is going to remove dist/server/ — a dangling import crashes runtimes consulting it
+async function disableAutoImportIfPrerendering(isBuild: boolean): Promise<UserConfig | undefined> {
+  if (!isBuild) return
+  const vikeConfig = await getVikeConfigInternal()
+  const prerenderConfigGlobal = await resolvePrerenderConfigGlobal(vikeConfig)
+  if (isDistServerRemoved(prerenderConfigGlobal)) {
+    return { vitePluginServerEntry: { disableAutoImport: true } }
   }
 }

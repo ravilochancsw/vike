@@ -104,6 +104,7 @@ type ConfigNameBuiltInGlobal =
   | 'onBeforeRoute'
   | 'pages'
   | 'prerender'
+  | 'ai'
   | 'disableAutoFullBuild'
   | 'includeAssetsImportedByServer'
   | 'baseAssets'
@@ -709,6 +710,24 @@ type ConfigBuiltIn = {
    * https://vike.dev/vercel
    */
   vercel?: Vercel
+
+  /**
+   * Setting for Vike's AI integration.
+   *
+   * https://vike.dev/ai
+   */
+  ai?: ConfigAi
+}
+
+type ConfigAi = {
+  /**
+   * Whether Vike checks that your app has Vike's skill for AI agents (`vike/SKILL.md`), logging a hint upon `$ vike dev` if it's missing or outdated.
+   *
+   * @default true
+   *
+   * https://vike.dev/ai#skill
+   */
+  skill?: boolean
 }
 
 type Vercel = {

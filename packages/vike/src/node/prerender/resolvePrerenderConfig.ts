@@ -1,5 +1,6 @@
 export { resolvePrerenderConfigGlobal }
 export { resolvePrerenderConfigLocal }
+export { isDistServerRemoved }
 
 import { VikeConfigInternal } from '../vite/shared/resolveVikeConfigInternal.js'
 import { assert, assertUsage } from '../../utils/assert.js'
@@ -28,6 +29,7 @@ async function resolvePrerenderConfigGlobal(vikeConfig: Pick<VikeConfigInternal,
     noExtraDir: pickFirst(prerenderSettings.map((c) => c.noExtraDir)) ?? null,
     parallel: pickFirst(prerenderSettings.map((c) => c.parallel)) ?? true,
     disableAutoRun: pickFirst(prerenderSettings.map((c) => c.disableAutoRun)) ?? false,
+    keepDistServer: pickFirst(prerenderSettings.map((c) => c.keepDistServer)) ?? false,
   } satisfies Record<string, boolean | number | null>
 
   let defaultLocalValue = false
@@ -56,9 +58,6 @@ async function resolvePrerenderConfigGlobal(vikeConfig: Pick<VikeConfigInternal,
     isPrerenderingEnabled,
     isPrerenderingEnabledForAllPages,
     redirects: pickFirst(prerenderSettings.map((c) => c.redirects)) ?? isPrerenderingEnabledForAllPages,
-    keepDistServer: !isPrerenderingEnabledForAllPages
-      ? true
-      : (pickFirst(prerenderSettings.map((c) => c.keepDistServer)) ?? false),
   })
 
   // TO-DO/next-major-release: remove
@@ -83,6 +82,16 @@ async function resolvePrerenderConfigLocal(pageConfig: PageConfigBuildTime) {
   )
   const prerenderConfigLocal = { value }
   return prerenderConfigLocal
+}
+
+// Whether pre-rendering removes dist/server/ once it's done
+// https://vike.dev/prerender#keepDistServer
+function isDistServerRemoved(prerenderConfigGlobal: {
+  isPrerenderingEnabledForAllPages: boolean
+  keepDistServer: boolean
+}): boolean {
+  if (!prerenderConfigGlobal.isPrerenderingEnabledForAllPages) return false
+  return !prerenderConfigGlobal.keepDistServer
 }
 
 function isObject2<T extends Record<string, unknown>>(value: T | boolean | undefined): value is T {

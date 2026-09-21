@@ -6,8 +6,8 @@
     "typecheck": "tsc --noEmit --watch"
   },
   "dependencies": {
-    "@batijs/elements": "^0.0.93",
-    "@brillout/docpress": "^0.17.4",
+    "@batijs/elements": "^0.0.96",
+    "@brillout/docpress": "^0.17.6",
     "@classmatejs/react": "^0.2.1",
     "@gsap/react": "^2.1.2",
     "@tailwindcss/vite": "^4.1.18",
@@ -22,8 +22,8 @@
     "react-dom": "^19.2.6",
     "react-tabs": "^6.1.0",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.9.3",
-    "vike": "0.4.260",
+    "typescript": "^7.0.2",
+    "vike": "0.4.266",
     "vite": "^7.3.1",
     "vite-plugin-svgr": "^4.3.0"
   },

@@ -36,7 +36,7 @@ import {
   loadPageConfigsLazyClientSide,
   PageContext_loadPageConfigsLazyClientSide,
 } from '../shared/loadPageConfigsLazyClientSide.js'
-import { pushHistoryState, saveScrollPosition } from './history.js'
+import { changeUrl, saveScrollPosition } from './history.js'
 import {
   addNewPageContextAborted,
   type ErrorAbort,
@@ -660,11 +660,6 @@ function stampFinished(urlOriginal: string) {
 }
 declare global {
   var _vike: VikeGlobalInternal
-}
-
-function changeUrl(url: string, overwriteLastHistoryEntry: boolean) {
-  if (getCurrentUrl() === url) return
-  pushHistoryState(url, overwriteLastHistoryEntry)
 }
 
 function disableClientRouting(err: unknown, log: boolean) {

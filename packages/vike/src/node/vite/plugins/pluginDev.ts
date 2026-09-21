@@ -4,6 +4,7 @@ export { logDockerHint }
 import { type Plugin, type ResolvedConfig, type UserConfig } from 'vite'
 import { optimizeDeps, resolveOptimizeDeps } from './pluginDev/optimizeDeps.js'
 import { determineFsAllowList } from './pluginDev/determineFsAllowList.js'
+import { logSkillHint } from './pluginDev/logSkillHint.js'
 import { addSsrMiddleware } from '../shared/addSsrMiddleware.js'
 import { isDebugError } from '../../../utils/debug.js'
 import { applyDev } from '../../../utils/isDev.js'
@@ -35,6 +36,11 @@ function pluginDev(): Plugin[] {
           await determineFsAllowList(config)
           interceptViteLogs(config)
           logDockerHint(config.server.host)
+        },
+      },
+      configureServer: {
+        handler(server) {
+          logSkillHint(server, config.root)
         },
       },
     },

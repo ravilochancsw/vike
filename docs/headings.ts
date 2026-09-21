@@ -659,6 +659,11 @@ const headings = [
   },
   {
     level: 2,
+    title: '`+rootAttributes`',
+    url: '/rootAttributes',
+  },
+  {
+    level: 2,
     title: '`+ssr`',
     url: '/ssr',
   },
@@ -1055,6 +1060,10 @@ function tools() {
       {
         title: 'Payload CMS',
         url: '/payload',
+      },
+      {
+        title: 'AI',
+        url: '/ai',
       },
     ] as const
   ).map((h) => ({ ...h, category: 'Guides (tools)' as const })) satisfies HeadingDetachedDefinition[]
